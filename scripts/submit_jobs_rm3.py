@@ -61,6 +61,8 @@ def parseInputArgs():
     parser = optparse.OptionParser(description='Submission script configuration.')
     parser.add_option('-c', '--codedir', default=None,
                       help='Folder where the simulation code is stored')
+    parser.add_option('-b', '--builddir', default=None,
+                      help='Folder where the compiled code is stored')
     parser.add_option('-o', '--outdir', default=None,
                       help='Folder where the jobs output will be saved')
     parser.add_option('-t', '--tmpdir', default=None,
@@ -339,6 +341,12 @@ def main():
         return
     if not os.path.isdir(OUTDIR):
         print 'ERROR: Output directory does not exist or is not found'
+        return
+    
+    if options.builddir:
+        BUILDDIR=options.builddir
+    if not os.path.isdir(BUILDDIR):
+        print 'ERROR: Build directory does not exist or is not found'
         return
 
     if options.tmpdir:
