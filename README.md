@@ -100,3 +100,50 @@ Some example macros are available in the `macro` directory.
 
 A guide of CYGNO commands is in  CYGNOCommandsREADME file.
 
+
+# Split jobs in the batch system
+
+A set of scripts to split the simulation in multiple jobs is provided in the folder `scripts`.
+Some command examples are provided for roma3 cluster, where PBS batch system is used.
+Examples of basic commands of PBS can be found in https://www.bo.infn.it/alice/introgrd/pbsabout/node17.html (or simply google).
+
+## Submit and check status of single job
+
+Submit job:
+```
+qsub scripts/examplejob.sh
+```
+Check status:
+```
+qstat -u $USER
+```
+
+
+## Split jobs
+
+Example to split 100M events into 100 jobs:
+```
+python scripts/submit_jobs_rm3.py -m CYGNOtest_surface_gamma --tag ext_gamma -n 100000000 -e 1000000 --builddir /storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-build/
+```
+
+Options meaning:
+
+* `-m` name of the macro template. The script looks for the macro in the directory `macro/` (use macro name without `.mac` extension)
+* `-n` total number of events to generate
+* `-e` events per job
+* `--tag` useful tag to identify the simulation. Output will be saved in a directory with this name
+* `--builddir` path to dir containing CYGNO executable
+
+By default the output is saved in `/storage/DATA-03/cygnorm3/CYGNO-MC-data/pbs_outputs/<tag-string>`
+Also other directories will be created in `pbs_logs` and  `pbs_workdir` folders, containing respectively the logs and the copy of the macro for each job.
+
+
+## Submit jobs with multiple macro configurations (for radioactive decays)
+
+Example to send on batch multiple radioactive isotopes simulations:
+```
+python scripts/submit_jobs_rm3.py -m CYGNOtest --tag PbShieldRadioactivity -f U238Activity_Shield2Pb_10Pb2Cu.txt -e 1000000  --builddir /storage/local/home/cygnorm3/dimperio/CYGNO/CYGNO-MC-build/
+```
+Options meaning:
+* `-f` configuration file for isotopes to be simulated. The script looks for the file in the `background/` directory. The file contains 4 columns: Name, Z, A, NEvents
+* the other options are the same. Note that `-n` option is not necessary when `-f` option is used (and will be ignored), since the total number of events is in the configuration file
