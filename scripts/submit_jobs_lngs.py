@@ -17,8 +17,12 @@ JobCounter=0
 script_template = """
 #PBS -j oe  
 
-#!/bin/bash
+newgrp cygno << END
+echo This is running as group \$(id -gn)
+END
+
 #this is a very simple example of submission script
+
 TAG=%(TAG)s
 CODEDIR=%(CODEDIR)s
 WORKDIR=%(WORKDIR)s
@@ -51,7 +55,7 @@ cp ${WORKDIR}/${MACRONAME}.root ${OUTDIR}/${PBSOUTDIR}${TAG}/
 cp ${TMPDIR}/${TAG}/pbslog_${MACRONAME}.log ${OUTDIR}/pbs_logs/${TAG}/
 cd ${OUTDIR}
 rm -rf ${WORKDIR}/
-rm -f ${TMPDIR}/${TAG}/*
+#rm -f ${TMPDIR}/${TAG}/*
 """
 EOFmessage='The simulation took:' #This must be one of the last messages in output in the log file. It is used to check if the log file is complete or not
 
