@@ -186,13 +186,11 @@ void CYGNODetectorMaterial::ConstructMaterials(){
     //---------
    
     // GEM effective material of 5 um copper + 50 um kapton + 5 um copper
-    density = 2.67*g/cm3; 
-    GEM = new G4Material("GEM", density, ncomponents=5);
-    GEM->AddElement(elC, natoms=22);
-    GEM->AddElement(elH, natoms=10);
-    GEM->AddElement(elN, natoms=2);
-    GEM->AddElement(elO, natoms=5);
-    GEM->AddElement(elCu, natoms=1);
+    density = 4.53*g/cm3; //consider the mass fractions, and the holes with 70um diameter and 140 um pitch
+    double fracMass;
+    GEM = new G4Material("GEM", density, ncomponents=2);
+    GEM->AddMaterial(Kapton, fracMass=0.44);
+    GEM->AddMaterial(Cu, fracMass=0.56);
 
 
     
