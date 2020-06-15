@@ -722,7 +722,7 @@ void CYGNOAnalysis::RegisterIon(G4int A, G4int Z, G4int PDG, G4int volNo,G4int c
   if (numion==0 || trackId != v_trackid_ion.at(numion-1)){
     //G4double kinE = (QuadriMomentum.e()/keV - QuadriMomentum.m()/keV);
     G4double kinE = kinE_prestep/keV;
-    energyDep_NR = kinE;
+    //energyDep_NR = kinE;
   
     if(fRegisterOn){
       //numion = v_trackid_ion.size();
@@ -837,6 +837,7 @@ void CYGNOAnalysis::EndOfEvent(const G4Event *event)
     }
     
     energyDep=0.;
+    energyDep_NR=0.;
     G4ThreeVector tempvec;
 
 
@@ -870,6 +871,9 @@ void CYGNOAnalysis::EndOfEvent(const G4Event *event)
 	    
 	    // sum total energy deposited in hits
 	    energyDep += (*CYGNOHC)[i]->GetEdep();
+	    //if particle releasing energy is an ion (PDG numbering scheme for ions 100ZZZAAAI)
+            if ((int)(*CYGNOHC)[i]->GetParticleID()>1000000000)
+	      energyDep_NR += (*CYGNOHC)[i]->GetEdep();
 	    }
     	}
     } 
