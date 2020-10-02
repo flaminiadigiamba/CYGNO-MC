@@ -67,9 +67,7 @@ Download CYGNO and LIME geometry files
 git clone git@github.com:CYGNUS-RD/geometry.git
 ```
 
-# Download CYGNO-MC repository
-
-Run 
+Download Geant4 code 
 ```
 git clone git@github.com:CYGNUS-RD/CYGNO-MC.git
 ```
