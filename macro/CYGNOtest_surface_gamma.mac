@@ -1,4 +1,4 @@
-/CYGNO/pathtocad /storage/DATA-03/cygnorm3/geometry/v2/
+#/CYGNO/pathtocad /storage/DATA-03/cygnorm3/geometry/v2/
 
 #CYGNO SHIELD
 #define the experiment location:
@@ -6,14 +6,14 @@
 
 #define if the geometry of the shielding is Full or NoShield
 #/CYGNO/shield/select NoShield
-/CYGNO/shield/thick0 10 cm
-/CYGNO/shield/thick1 10 cm
-/CYGNO/shield/thick2 10 cm
-/CYGNO/shield/thick3 5 cm
+/CYGNO/shield/thick0 1 cm
+/CYGNO/shield/thick1 1 cm
+/CYGNO/shield/thick2 1 cm
+/CYGNO/shield/thick3 50 cm
 /CYGNO/shield/mat0 Air
 /CYGNO/shield/mat1 Air
-/CYGNO/shield/mat2 Pb
-/CYGNO/shield/mat3 Cu
+/CYGNO/shield/mat2 Air
+/CYGNO/shield/mat3 Air
 
 #define fraction of He and CF4 in the sensitive gas
 /CYGNO/gas/frac_He 0.6

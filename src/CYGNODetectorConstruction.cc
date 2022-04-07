@@ -45,15 +45,15 @@
 #include "CYGNOVolumes.hh"
 
 CYGNODetectorConstruction::CYGNODetectorConstruction() :
-   CYGNOGeomPath("../geometry/lime/"),
+   CYGNOGeomPath("../geometry/cygno_04/"),
    rockThicknessOuter(-999*m),
    rockThicknessInner(-999*m),
    CYGNOLab("NoCave"),
    //CYGNOLab("LNGS"),
    CYGNOShielding("FullShield"),
    //CYGNOShielding("NoShield"),
-   thick0(0.90*m), thick1(0.40*m), thick2(0.20*m), thick3(0.05*m), 
-   Mat0("Water"), Mat1("PE"), Mat2("Pb"), Mat3("Cu")
+   thick0(0.01*m), thick1(0.01*m), thick2(0.01*m), thick3(0.50*m), 
+   Mat0("Air"), Mat1("Air"), Mat2("Air"), Mat3("Air")
 {
 	
      fMessenger = new CYGNODetectorConstructionMessenger(this);
@@ -252,10 +252,14 @@ G4VPhysicalVolume* CYGNODetectorConstruction::Construct()
         G4double AirBox_y;
         G4double AirBox_z;
         G4Box* AirBox;
-        AirBox_x = 2.0*m; //2.65*m;
-        AirBox_y = 0.8*m; //1.45*m;
-        AirBox_z = 0.8*m; //1.45*m;        
-        tr_InsideVolume = G4ThreeVector(0.,0.,0.);
+        
+	//FIXME
+	//same as TPC gas
+	AirBox_x = 2.*m; //2.65*m;
+        AirBox_y = 1.*m; //1.45*m;
+        AirBox_z = 1.*m; //1.45*m;        
+        
+	tr_InsideVolume = G4ThreeVector(0.,0.,0.);
         rot_InsideVolume = G4RotationMatrix();		
         size_InsideVolume = G4ThreeVector(AirBox_x/2.,
               								AirBox_y/2.,
@@ -331,9 +335,9 @@ G4VPhysicalVolume* CYGNODetectorConstruction::Construct()
 	  G4double AirBox_y;
 	  G4double AirBox_z;
 	  G4Box* AirBox;
-          AirBox_x = 5.*m;
-          AirBox_y = 3.*m;
-          AirBox_z = 3.*m;        
+          AirBox_x = 2.8*m;
+          AirBox_y = 1.6*m;
+          AirBox_z = 1.6*m;        
 	  name_phys="AirBox";
 	  name_log=name_phys+"_log";
 	  name_solid=name_phys+"_solid";
@@ -376,177 +380,119 @@ G4VPhysicalVolume* CYGNODetectorConstruction::Construct()
     G4RotationMatrix* rotlens0 = new G4RotationMatrix();
     rotlens0->rotateY(90*deg);
 
-    camera_phys = new G4PVPlacement(rotcam0,trcam0,camera_log,"camera",AirBox_log, false, 0, true);
-    camera_lens_phys = new G4PVPlacement(rotlens0,trlens0,camera_lens_log,"camera_lens",AirBox_log, false, 0, true);
-    G4double tolerance = 1*mm;
 
     //**********************************************************************
     // ********* CYGNO volumes form CADMesh *****************************
     //**********************************************************************
     
     char namestl[50];
-    sprintf(namestl,"%s/LIMEDetectorBody.stl",CYGNOGeomPath.c_str());
+    sprintf(namestl,"%s/box_cu.stl",CYGNOGeomPath.c_str());
     G4cout << namestl << G4endl;
-    //CADMesh * mesh_LIMEDetectorBody = new CADMesh("../geometry/v2/LIMEDetectorBody.stl");    
     ifstream infile(CYGNOGeomPath.c_str());
     if (infile.good())
-    	mesh_LIMEDetectorBody = new CADMesh(namestl);    
-    //namestl = "LIMEinternalStructure.stl";
-    sprintf(namestl,"%s/LIMEinternalStructure.stl",CYGNOGeomPath.c_str());
+    	mesh_box_cu = new CADMesh(namestl);    
+    sprintf(namestl,"%s/cathode.stl",CYGNOGeomPath.c_str());
     G4cout << namestl << G4endl;
     if (infile.good())
-    	mesh_LIMEinternalStructure = new CADMesh(namestl);
-    //namestl = "cameras.stl";    
-//    sprintf(namestl,"%s/cameras.stl",CYGNOGeomPath.c_str());
-//    G4cout << namestl << G4endl;
-//    if (infile.good())
-//      mesh_camera = new CADMesh(namestl);    
-    //CADMesh * mesh_window = new CADMesh("../geometry/v1/glass_windows.stl");  
-    //namestl = "LIMEendPMT.stl";  
-    sprintf(namestl,"%s/LIMEendPMT.stl",CYGNOGeomPath.c_str());
+    	mesh_cathode = new CADMesh(namestl);
+    sprintf(namestl,"%s/cathode_holder.stl",CYGNOGeomPath.c_str());
     G4cout << namestl << G4endl;
     if (infile.good())
-      mesh_LIMEendPMT = new CADMesh(namestl);
-    //namestl = "turns_support.stl";    
-    //sprintf(namestl,"%s/turns_support.stl",CYGNOGeomPath.c_str());
-    //G4cout << namestl << G4endl;
-    //if (infile.good())
-    // mesh_turns_support = new CADMesh(namestl);
-    //namestl = "FieldRings.stl";    
-    sprintf(namestl,"%s/FieldRings.stl",CYGNOGeomPath.c_str());
+    	mesh_cathode_holder = new CADMesh(namestl);
+    sprintf(namestl,"%s/field_cage_cu.stl",CYGNOGeomPath.c_str());
     G4cout << namestl << G4endl;
     if (infile.good())
-      mesh_FieldRings = new CADMesh(namestl);
-    //namestl = "gem_frame.stl";    
-    //sprintf(namestl,"%s/gem_frame.stl",CYGNOGeomPath.c_str());
-    //G4cout << namestl << G4endl;
-    sprintf(namestl,"%s/GEMstretchers.stl",CYGNOGeomPath.c_str());
+      mesh_field_cage_cu = new CADMesh(namestl);
+    sprintf(namestl,"%s/internal_structure.stl",CYGNOGeomPath.c_str());
     G4cout << namestl << G4endl;
     if (infile.good())
-      mesh_GEMstretchers= new CADMesh(namestl);  
-    sprintf(namestl,"%s/GEMsupportStructure.stl",CYGNOGeomPath.c_str());
+      mesh_internal_structure = new CADMesh(namestl);
+    sprintf(namestl,"%s/gem.stl",CYGNOGeomPath.c_str());
+    G4cout << namestl << G4endl;
+    if (infile.good())
+      mesh_gem= new CADMesh(namestl);  
+    sprintf(namestl,"%s/gem_stretcher.stl",CYGNOGeomPath.c_str());
     G4cout << namestl << G4endl;     
     if (infile.good())
-      mesh_GEMsupportStructure = new CADMesh(namestl); 
-    //namestl = "GEMsupportStructure.stl";
-
-    //namestl = "GEMfoils.stl";
-    sprintf(namestl,"%s/GEMfoils.stl",CYGNOGeomPath.c_str());
+      mesh_gem_stretcher = new CADMesh(namestl); 
+    sprintf(namestl,"%s/light_guide.stl",CYGNOGeomPath.c_str());
     G4cout << namestl << G4endl;
     if (infile.good())
-      mesh_GEMfoils = new CADMesh(namestl);
+      mesh_light_guide = new CADMesh(namestl);
 
-//    //namstl = "SupportBenchLime.stl";    
-//    sprintf(namestl,"%s/SupportBenchLime.stl",CYGNOGeomPath.c_str());
-//    G4cout << namestl << G4endl;
-//    if (infile.good())
-//      mesh_SupportBenchLime = new CADMesh(namestl);
 
-    //namestl = "Cathode.stl";   
-    sprintf(namestl,"%s/Cathode.stl",CYGNOGeomPath.c_str());
-    G4cout << namestl << G4endl;
-    if (infile.good())
-      mesh_Cathode = new CADMesh(namestl);   
+    mesh_box_cu->SetScale(mm);
+    mesh_cathode->SetScale(mm);
+    mesh_cathode_holder->SetScale(mm);
+    mesh_field_cage_cu->SetScale(mm);
+    mesh_internal_structure->SetScale(mm);
+    mesh_gem->SetScale(mm);
+    mesh_gem_stretcher->SetScale(mm);
+    mesh_light_guide->SetScale(mm);
+    
+    //box Cu
+    cad_box_cu_solid = mesh_box_cu->TessellatedMesh();
+    cad_box_cu_logical = new G4LogicalVolume(cad_box_cu_solid, CYGNOMaterials->Material("Cu"), "cad_box_cu_logical");
+    cad_box_cu_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Cu"));
 
-    if (infile.good()){
-      mesh_LIMEDetectorBody->SetScale(mm);
-      mesh_LIMEinternalStructure->SetScale(mm);
-      //mesh_camera->SetScale(mm);
-      //mesh_window->SetScale(mm);
-      mesh_LIMEendPMT->SetScale(mm);
-      mesh_FieldRings->SetScale(mm);
-      mesh_GEMstretchers->SetScale(mm);
-      mesh_GEMsupportStructure->SetScale(mm);
-      mesh_GEMfoils->SetScale(mm);
-//      mesh_SupportBenchLime->SetScale(mm);
-      mesh_Cathode->SetScale(mm);
+    //acrylic box and internal structure
+    cad_internal_structure_solid = mesh_internal_structure->TessellatedMesh();
+    cad_internal_structure_logical = new G4LogicalVolume(cad_internal_structure_solid, CYGNOMaterials->Material("Perspex"), "cad_internal_structure_logical", 0, 0, 0);
+    cad_internal_structure_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Perspex"));
+    //light guide cameras
+    cad_light_guide_solid = mesh_light_guide->TessellatedMesh();
+    cad_light_guide_logical = new G4LogicalVolume(cad_light_guide_solid, CYGNOMaterials->Material("Perspex"), "cad_light_guide_logical", 0, 0, 0);
+    cad_light_guide_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Perspex"));
+
+    //field cage Cu 
+    cad_field_cage_cu_solid = mesh_field_cage_cu->TessellatedMesh();
+    cad_field_cage_cu_logical = new G4LogicalVolume(cad_field_cage_cu_solid, CYGNOMaterials->Material("Cu"), "cad_field_cage_cu_logical", 0, 0, 0);
+    cad_field_cage_cu_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Cu"));
+
+    //GEM stretcher
+    cad_gem_stretcher_solid = mesh_gem_stretcher->TessellatedMesh();
+    cad_gem_stretcher_logical = new G4LogicalVolume(cad_gem_stretcher_solid, CYGNOMaterials->Material("Perspex"), "cad_gem_stretcher_logical", 0, 0, 0);
+    cad_gem_stretcher_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Perspex"));
     
 
-      //LIME Detector Body
-      cad_LIMEDetectorBody_solid = mesh_LIMEDetectorBody->TessellatedMesh();
-      cad_LIMEDetectorBody_logical = new G4LogicalVolume(cad_LIMEDetectorBody_solid, CYGNOMaterials->Material("Perspex"), "cad_LIMEDetectorBody_logical");
-      cad_LIMEDetectorBody_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Perspex"));
+    //GEM foils
+    cad_gem_solid = mesh_gem->TessellatedMesh();
+    cad_gem_logical = new G4LogicalVolume(cad_gem_solid, CYGNOMaterials->Material("GEM"), "cad_gem_logical", 0, 0, 0); //GEM material is an effective material of kapton + copper 
+    
+    
+    //cathode
+    cad_cathode_solid = mesh_cathode->TessellatedMesh();
+    cad_cathode_logical = new G4LogicalVolume(cad_cathode_solid, CYGNOMaterials->Material("Cu"), "cad_cathode_logical", 0, 0, 0);
+    cad_cathode_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Cu"));
 
-
-      //LIME Internal Structure
-      cad_LIMEinternalStructure_solid = mesh_LIMEinternalStructure->TessellatedMesh();
-      cad_LIMEinternalStructure_logical = new G4LogicalVolume(cad_LIMEinternalStructure_solid, CYGNOMaterials->Material("Perspex"), "cad_LIMEinternalStructure_logical", 0, 0, 0);
-      //cad_LIMEinternalStructure_logical->SetVisAttributes(CYGNOMaterials->VisAttributes(cad_LIMEinternalStructure_logical->GetMaterial()->GetName()));
-      cad_LIMEinternalStructure_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Perspex"));
-    }
-  
+    //cathode holder
+    cad_cathode_holder_solid = mesh_cathode_holder->TessellatedMesh();
+    cad_cathode_holder_logical = new G4LogicalVolume(cad_cathode_holder_solid, CYGNOMaterials->Material("Cu"), "cad_cathode_holder_logical", 0, 0, 0);
+    cad_cathode_holder_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Cu"));
+    
     //TPC gas
-    G4double TPC_x = 640.*mm;//640.*mm;
-    G4double TPC_y = 500.*mm; //500
-    G4double TPC_z = 460.*mm; //470.*mm;
+    G4double TPC_x = 2000.*mm;
+    G4double TPC_y = 1000*mm;
+    G4double TPC_z = 1000*mm;
       
     name_phys="TPC";
     name_log=name_phys+"_log";
     name_solid=name_phys+"_solid";
     G4Box* TPC_box = new G4Box(name_solid,0.5*TPC_x,0.5*TPC_y,0.5*TPC_z);
     TPC_log = new G4LogicalVolume(TPC_box,CYGNOMaterials->Material("CYGNO_gas"),name_log,0,0,0);
+    TPC_log->SetVisAttributes(CYGNOMaterials->VisAttributes("CYGNO_gas"));
     
     //CYGNO fiducial gas
     G4double CYGNO_x = 500.*mm;
-    G4double CYGNO_y = 300.*mm;
-    G4double CYGNO_z = 300.*mm;//300.*mm;
+    G4double CYGNO_y = 336.*mm;
+    G4double CYGNO_z = 336.*mm;
       
     name_phys="CYGNO";
     name_log=name_phys+"_log";
     name_solid=name_phys+"_solid";
     G4Box* CYGNO_box = new G4Box(name_solid,0.5*CYGNO_x,0.5*CYGNO_y,0.5*CYGNO_z);
     CYGNO_log = new G4LogicalVolume(CYGNO_box,CYGNOMaterials->Material("CYGNO_gas"),name_log,0,0,0);
-    //CYGNO_log->SetVisAttributes(CYGNOMaterials->VisAttributes(CYGNO_log->GetMaterial()->GetName()));
     CYGNO_log->SetVisAttributes(CYGNOMaterials->VisAttributes("CYGNO_gas"));
-
-    if (infile.good()){
-      //LIMEendPMT
-      cad_LIMEendPMT_solid = mesh_LIMEendPMT->TessellatedMesh();
-      cad_LIMEendPMT_logical = new G4LogicalVolume(cad_LIMEendPMT_solid, CYGNOMaterials->Material("Perspex"), "cad_LIMEendPMT_logical", 0, 0, 0);
-      //cad_LIMEendPMT_logical->SetVisAttributes(CYGNOMaterials->VisAttributes(cad_LIMEendPMT_logical->GetMaterial()->GetName()));
-      cad_LIMEendPMT_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Perspex"));
- 
-      //turns support
-//      cad_turns_support_solid = mesh_turns_support->TessellatedMesh();
-//      cad_turns_support_logical = new G4LogicalVolume(cad_turns_support_solid, CYGNOMaterials->Material("Perspex"), "cad_turns_support_logical", 0, 0, 0);
-      //cad_turns_support_logical->SetVisAttributes(CYGNOMaterials->VisAttributes(cad_turns_support_logical->GetMaterial()->GetName()));
-//      cad_turns_support_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Perspex"));
-
-      //field cage  
-      cad_FieldRings_solid = mesh_FieldRings->TessellatedMesh();
-      cad_FieldRings_logical = new G4LogicalVolume(cad_FieldRings_solid, CYGNOMaterials->Material("Cu"), "cad_FieldRings_logical", 0, 0, 0);
-      //cad_FieldRings_logical->SetVisAttributes(CYGNOMaterials->VisAttributes(cad_FieldRings_logical->GetMaterial()->GetName()));
-      cad_FieldRings_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Cu"));
-
-      //GEM stretchers
-      cad_GEMstretchers_solid = mesh_GEMstretchers->TessellatedMesh();
-      cad_GEMstretchers_logical = new G4LogicalVolume(cad_GEMstretchers_solid, CYGNOMaterials->Material("Perspex"), "cad_GEMstretchers_logical", 0, 0, 0);
-      //cad_GEMstretchers_logical->SetVisAttributes(CYGNOMaterials->VisAttributes(cad_GEMstretchers_logical->GetMaterial()->GetName()));
-      cad_GEMstretchers_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Perspex"));
-      
-      //GEM structure support
-      cad_GEMsupportStructure_solid = mesh_GEMsupportStructure->TessellatedMesh();
-      cad_GEMsupportStructure_logical = new G4LogicalVolume(cad_GEMsupportStructure_solid, CYGNOMaterials->Material("Perspex"), "cad_GEMsupportStructure_logical", 0, 0, 0);
-      cad_GEMsupportStructure_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Perspex"));
-
-
-      //GEMfoils
-      cad_GEMfoils_solid = mesh_GEMfoils->TessellatedMesh();
-      cad_GEMfoils_logical = new G4LogicalVolume(cad_GEMfoils_solid, CYGNOMaterials->Material("GEM"), "cad_GEMfoils_logical", 0, 0, 0); //GEM material is an effective material of kapton + copper 
-      //cad_GEMfoils_logical->SetVisAttributes(CYGNOMaterials->VisAttributes(cad_GEMfoils_logical->GetMaterial()->GetName()));
-      
-//      //Support Bench LIME
-//      cad_SupportBenchLime_solid = mesh_SupportBenchLime->TessellatedMesh();
-//      cad_SupportBenchLime_logical = new G4LogicalVolume(cad_SupportBenchLime_solid, CYGNOMaterials->Material("Cu"), "cad_SupportBenchLime_logical", 0, 0, 0);
-//      //cad_SupportBenchLime_logical->SetVisAttributes(CYGNOMaterials->VisAttributes(cad_SupportBenchLime_logical->GetMaterial()->GetName()));
-//      cad_SupportBenchLime_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Cu"));
-      
-      //cathode
-      cad_Cathode_solid = mesh_Cathode->TessellatedMesh();
-      cad_Cathode_logical = new G4LogicalVolume(cad_Cathode_solid, CYGNOMaterials->Material("Cu"), "cad_Cathode_logical", 0, 0, 0);
-      cad_Cathode_logical->SetVisAttributes(CYGNOMaterials->VisAttributes("Cu"));
-    }
-
 
     if (CYGNOLab == "LNGS"){
 	tr+=G4ThreeVector(0.,-1*size_Laboratory.y()+size_Shielding.y(),size_Laboratory.z()-10*m);
@@ -604,38 +550,68 @@ G4VPhysicalVolume* CYGNODetectorConstruction::Construct()
     }
     G4ThreeVector  size;
 
-    tr_cad=G4ThreeVector(-3847*mm+295*mm,-3847*mm,230.*mm);
-    if (infile.good()){
-      cad_LIMEDetectorBody_physical = new G4PVPlacement(G4Transform3D(rot,tr_cad), 
-  		    cad_LIMEDetectorBody_logical,"cad_LIMEDetectorBody_physical", AirBox_log, false, 0, true);
-      cad_LIMEendPMT_physical = new G4PVPlacement(G4Transform3D(rot,tr_cad), 
-        	    cad_LIMEendPMT_logical,"cad_LIMEendPMT_physical", AirBox_log, false, 0, true);
-//      cad_SupportBenchLime_physical = new G4PVPlacement(G4Transform3D(rot,tr), 
-//  		    cad_SupportBenchLime_logical,"cad_SupportBenchLime_physical", AirBox_log, false, 0, true);
-    }
+    //box 
+    tr_cad=G4ThreeVector(-1.*cm,0.,0.);
+    rot_cad = G4RotationMatrix();
+    rot_cad.rotateX(-90.*deg);
+    cad_box_cu_physical = new G4PVPlacement(G4Transform3D(rot,tr_cad), 
+      	    cad_box_cu_logical,"cad_box_cu_physical", Shield3_log, false, 0, true);
+    rot = G4RotationMatrix();
+    
+    
+    //TPC gas
     tr=G4ThreeVector(0.,0.,0.);
     TPC_phys = new G4PVPlacement(G4Transform3D(rot,tr),
       	    TPC_log,"TPC_gas", AirBox_log, false, 0, true);
-    tr_CYGNO_gas_1=G4ThreeVector(TPC_x/2.-CYGNO_x/2.-50.*mm,-20*mm,0.);
-    CYGNO_phys = new G4PVPlacement(G4Transform3D(rot,tr_CYGNO_gas_1),
+    
+    // internal parts
+    cad_internal_structure_physical = new G4PVPlacement(G4Transform3D(rot_cad,tr_cad), 
+      	    cad_internal_structure_logical,"cad_internal_structure_physical", TPC_log, false, 0, true);
+    cad_field_cage_cu_physical = new G4PVPlacement(G4Transform3D(rot_cad,tr_cad), 
+      	    cad_field_cage_cu_logical,"cad_field_cage_cu_physical", TPC_log, false, 0, true);
+    cad_gem_stretcher_physical = new G4PVPlacement(G4Transform3D(rot_cad,tr_cad), 
+      	    cad_gem_stretcher_logical,"cad_gem_stretcher_physical", TPC_log, false, 0, true);
+    cad_gem_physical = new G4PVPlacement(G4Transform3D(rot_cad,tr_cad), 
+      	    cad_gem_logical,"cad_gem_physical", TPC_log, false, 0, true);
+    cad_cathode_physical = new G4PVPlacement(G4Transform3D(rot_cad,tr_cad), 
+      	    cad_cathode_logical,"cad_cathode_physical", TPC_log, false, 0, true);
+    cad_cathode_holder_physical = new G4PVPlacement(G4Transform3D(rot_cad,tr_cad), 
+      	    cad_cathode_holder_logical,"cad_cathode_holder_physical", TPC_log, false, 0, true);
+    cad_light_guide_physical = new G4PVPlacement(G4Transform3D(rot_cad,tr_cad), 
+  		    cad_light_guide_logical,"cad_light_guide_physical", TPC_log, false, 0, true);
+    
+    //CYGNO sensitive regions
+    tr_CYGNO_gas_0=G4ThreeVector(505.*mm-CYGNO_x/2.,CYGNO_y/2.,CYGNO_z/2.);
+    tr_CYGNO_gas_1=G4ThreeVector(505.*mm-CYGNO_x/2.,CYGNO_y/2.,-1*CYGNO_z/2.);
+    tr_CYGNO_gas_2=G4ThreeVector(505.*mm-CYGNO_x/2.,-1.*CYGNO_y/2.,CYGNO_z/2.);
+    tr_CYGNO_gas_3=G4ThreeVector(505.*mm-CYGNO_x/2.,-1.*CYGNO_y/2.,-1*CYGNO_z/2);
+    tr_CYGNO_gas_4=G4ThreeVector(-505.*mm+CYGNO_x/2.,CYGNO_y/2.,CYGNO_z/2.);
+    tr_CYGNO_gas_5=G4ThreeVector(-505.*mm+CYGNO_x/2.,CYGNO_y/2.,-1*CYGNO_z/2.);
+    tr_CYGNO_gas_6=G4ThreeVector(-505.*mm+CYGNO_x/2.,-1.*CYGNO_y/2.,CYGNO_z/2.);
+    tr_CYGNO_gas_7=G4ThreeVector(-505.*mm+CYGNO_x/2.,-1.*CYGNO_y/2.,-1*CYGNO_z/2);
+
+    CYGNO_phys = new G4PVPlacement(G4Transform3D(rot,tr_CYGNO_gas_0),
       	    CYGNO_log,"CYGNO_gas", TPC_log, false, 0, true);
+    CYGNO_phys = new G4PVPlacement(G4Transform3D(rot,tr_CYGNO_gas_1),
+      	    CYGNO_log,"CYGNO_gas", TPC_log, false, 1, true);
+    CYGNO_phys = new G4PVPlacement(G4Transform3D(rot,tr_CYGNO_gas_2),
+      	    CYGNO_log,"CYGNO_gas", TPC_log, false, 2, true);
+    CYGNO_phys = new G4PVPlacement(G4Transform3D(rot,tr_CYGNO_gas_3),
+      	    CYGNO_log,"CYGNO_gas", TPC_log, false, 3, true);
+    CYGNO_phys = new G4PVPlacement(G4Transform3D(rot,tr_CYGNO_gas_4),
+      	    CYGNO_log,"CYGNO_gas", TPC_log, false, 4, true);
+    CYGNO_phys = new G4PVPlacement(G4Transform3D(rot,tr_CYGNO_gas_5),
+      	    CYGNO_log,"CYGNO_gas", TPC_log, false, 5, true);
+    CYGNO_phys = new G4PVPlacement(G4Transform3D(rot,tr_CYGNO_gas_6),
+      	    CYGNO_log,"CYGNO_gas", TPC_log, false, 6, true);
+    CYGNO_phys = new G4PVPlacement(G4Transform3D(rot,tr_CYGNO_gas_7),
+      	    CYGNO_log,"CYGNO_gas", TPC_log, false, 7, true);
           
-    tr=G4ThreeVector(0.,0.,0.);
-    rot = G4RotationMatrix();
-    if (infile.good()){
-      cad_LIMEinternalStructure_physical = new G4PVPlacement(G4Transform3D(rot,tr_cad), 
-        	    cad_LIMEinternalStructure_logical,"cad_LIMEinternalStructure_physical", TPC_log, false, 0, true);
-      cad_FieldRings_physical = new G4PVPlacement(G4Transform3D(rot,tr_cad), 
-        	    cad_FieldRings_logical,"cad_FieldRings_physical", TPC_log, false, 0, true);
-      cad_GEMstretchers_physical = new G4PVPlacement(G4Transform3D(rot,tr_cad), 
-        	    cad_GEMstretchers_logical,"cad_GEMstretchers_physical", TPC_log, false, 0, true);
-      cad_GEMsupportStructure_physical = new G4PVPlacement(G4Transform3D(rot,tr_cad), 
-        	    cad_GEMsupportStructure_logical,"cad_GEMsupportStructure_physical", TPC_log, false, 0, true);
-      cad_GEMfoils_physical = new G4PVPlacement(G4Transform3D(rot,tr_cad), 
-  		    cad_GEMfoils_logical,"cad_GEMfoils_physical", TPC_log, false, 0, true);
-      cad_Cathode_physical = new G4PVPlacement(G4Transform3D(rot,tr_cad), 
-  		    cad_Cathode_logical,"cad_Cathode_physical", TPC_log, false, 0, true);
-    }  
+    
+    //Cameras
+   // camera_phys = new G4PVPlacement(rotcam0,trcam0,camera_log,"camera",AirBox_log, false, 0, true);
+   // camera_lens_phys = new G4PVPlacement(rotlens0,trlens0,camera_lens_log,"camera_lens",AirBox_log, false, 0, true);
+   // G4double tolerance = 1*mm;
    
     //
     //**********************************************************************
@@ -686,18 +662,17 @@ void CYGNODetectorConstruction::SaveMassAndDensity()
   CYGNOProperties->AddVolumeNameMassAndDensity(AirBox_log);
   ifstream infile(CYGNOGeomPath.c_str());
   if (infile.good()) {
-    CYGNOProperties->AddVolumeNameMassAndDensity(cad_LIMEDetectorBody_logical);
-    CYGNOProperties->AddVolumeNameMassAndDensity(cad_LIMEinternalStructure_logical);
+    CYGNOProperties->AddVolumeNameMassAndDensity(cad_box_cu_logical);
+    CYGNOProperties->AddVolumeNameMassAndDensity(cad_internal_structure_logical);
     CYGNOProperties->AddVolumeNameMassAndDensity(camera_log);
     CYGNOProperties->AddVolumeNameMassAndDensity(camera_lens_log);
     CYGNOProperties->AddVolumeNameMassAndDensity(TPC_log);
     CYGNOProperties->AddVolumeNameMassAndDensity(CYGNO_log);
-    CYGNOProperties->AddVolumeNameMassAndDensity(cad_LIMEendPMT_logical);
-    CYGNOProperties->AddVolumeNameMassAndDensity(cad_GEMstretchers_logical);
-    CYGNOProperties->AddVolumeNameMassAndDensity(cad_GEMsupportStructure_logical);
-    CYGNOProperties->AddVolumeNameMassAndDensity(cad_GEMfoils_logical);
-    CYGNOProperties->AddVolumeNameMassAndDensity(cad_Cathode_logical);
-    CYGNOProperties->AddVolumeNameMassAndDensity(cad_FieldRings_logical);
+    CYGNOProperties->AddVolumeNameMassAndDensity(cad_light_guide_logical);
+    CYGNOProperties->AddVolumeNameMassAndDensity(cad_gem_stretcher_logical);
+    CYGNOProperties->AddVolumeNameMassAndDensity(cad_gem_logical);
+    CYGNOProperties->AddVolumeNameMassAndDensity(cad_cathode_logical);
+    CYGNOProperties->AddVolumeNameMassAndDensity(cad_field_cage_cu_logical);
   }
 
 //  if ( productionRockThinTube_phys )
@@ -742,22 +717,19 @@ void CYGNODetectorConstruction::UpdateGeometry()
   Shield2_log=0; 
   Shield3_log=0; 
   AirBox_log=0;
-
-  cad_LIMEDetectorBody_logical=0;
-  cad_LIMEinternalStructure_logical=0;
- // cad_cameras_all_logical=0;
   TPC_log=0;
   CYGNO_log=0;
-  cad_LIMEendPMT_logical=0;
-  cad_GEMsupportStructure_logical=0;
-  cad_GEMstretchers_logical=0;
-  cad_GEMfoils_logical=0;
-//  cad_SupportBenchLime_logical=0;
-  cad_Cathode_logical=0;
-  cad_FieldRings_logical=0;
- // camera_log=0;
- // camera_lens_log=0;
- // camera_shield_log=0;
+  camera_log=0;
+  camera_lens_log=0;
+  camera_shield_log=0;
+
+  cad_box_cu_logical=0;
+  cad_internal_structure_logical=0;
+  cad_light_guide_logical=0;
+  cad_gem_stretcher_logical=0;
+  cad_gem_logical=0;
+  cad_cathode_logical=0;
+  cad_field_cage_cu_logical=0;
 
 
   InsideVolume_log=0;

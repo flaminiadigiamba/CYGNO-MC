@@ -91,17 +91,14 @@ class CYGNODetectorConstruction : public G4VUserDetectorConstruction
 
 
     //CADMesh
-    CADMesh * mesh_LIMEDetectorBody;
-    CADMesh * mesh_LIMEinternalStructure;
-    //CADMesh * mesh_camera;
-    CADMesh * mesh_LIMEendPMT;
-    //CADMesh * mesh_turns_support;
-    CADMesh * mesh_FieldRings;
-    CADMesh * mesh_GEMstretchers;
-    CADMesh * mesh_GEMsupportStructure;
-    CADMesh * mesh_GEMfoils;
-    CADMesh * mesh_SupportBenchLime;
-    CADMesh * mesh_Cathode; 
+    CADMesh* mesh_box_cu;
+    CADMesh* mesh_cathode;
+    CADMesh* mesh_cathode_holder;
+    CADMesh* mesh_field_cage_cu;
+    CADMesh* mesh_internal_structure;
+    CADMesh* mesh_gem;
+    CADMesh* mesh_gem_stretcher;
+    CADMesh* mesh_light_guide;
     
     //Building blocks: logic volumes, sizes and positions
     G4ThreeVector  tr_Tot;
@@ -127,26 +124,28 @@ class CYGNODetectorConstruction : public G4VUserDetectorConstruction
     G4ThreeVector tr_cad;
     G4RotationMatrix rot_cad;
     G4RotationMatrix absrot_cad;
+    G4ThreeVector tr_CYGNO_gas_0;
     G4ThreeVector tr_CYGNO_gas_1;
     G4ThreeVector tr_CYGNO_gas_2;
+    G4ThreeVector tr_CYGNO_gas_3;
+    G4ThreeVector tr_CYGNO_gas_4;
+    G4ThreeVector tr_CYGNO_gas_5;
+    G4ThreeVector tr_CYGNO_gas_6;
+    G4ThreeVector tr_CYGNO_gas_7;
     G4RotationMatrix rot_CYGNO_gas;
     G4RotationMatrix absrot_CYGNO_gas;
     G4ThreeVector tr_cad_internal;
     
     
     //Solids and meshes
-    G4VSolid * cad_LIMEDetectorBody_solid;
-    G4VSolid * cad_LIMEinternalStructure_solid;
-    //G4VSolid * cad_cameras_all_solid;
-    //G4VSolid * cad_window_solid;
-    G4VSolid * cad_LIMEendPMT_solid;
-    //G4VSolid * cad_turns_support_solid;
-    G4VSolid * cad_GEMstretchers_solid;
-    G4VSolid * cad_GEMsupportStructure_solid;
-    G4VSolid * cad_GEMfoils_solid;
-    G4VSolid * cad_SupportBenchLime_solid;
-    G4VSolid * cad_Cathode_solid;
-    G4VSolid * cad_FieldRings_solid;
+    G4VSolid* cad_box_cu_solid;
+    G4VSolid* cad_cathode_solid;
+    G4VSolid* cad_cathode_holder_solid;
+    G4VSolid* cad_field_cage_cu_solid;
+    G4VSolid* cad_internal_structure_solid;
+    G4VSolid* cad_gem_solid;
+    G4VSolid* cad_gem_stretcher_solid;
+    G4VSolid* cad_light_guide_solid;
    
     
     // Logical volumes
@@ -156,25 +155,21 @@ class CYGNODetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* Shield2_log; 
     G4LogicalVolume* Shield3_log; 
     G4LogicalVolume* AirBox_log;
+    G4LogicalVolume* TPC_log;
+    G4LogicalVolume* CYGNO_log;
+    G4LogicalVolume* camera_log; 
+    G4LogicalVolume* camera_lens_log; 
+    G4LogicalVolume* camera_shield_log;
 
-    G4LogicalVolume * cad_LIMEDetectorBody_logical;
-    G4LogicalVolume * cad_LIMEinternalStructure_logical;
-    //G4LogicalVolume * cad_cameras_all_logical;
-    //G4LogicalVolume * cad_window_logical;
-    G4LogicalVolume * TPC_log;
-    G4LogicalVolume * CYGNO_log;
-    G4LogicalVolume * cad_LIMEendPMT_logical;
-    //G4LogicalVolume * cad_turns_support_logical;
-    G4LogicalVolume * cad_GEMstretchers_logical;
-    G4LogicalVolume * cad_GEMsupportStructure_logical;
-    G4LogicalVolume * cad_GEMfoils_logical;
-    G4LogicalVolume * cad_SupportBenchLime_logical;
-    G4LogicalVolume * cad_Cathode_logical;
-    G4LogicalVolume * cad_FieldRings_logical;
-    G4LogicalVolume * camera_log; 
-    G4LogicalVolume * camera_lens_log; 
-    G4LogicalVolume * camera_shield_log;
-    G4LogicalVolume * window_log;
+    G4LogicalVolume* cad_box_cu_logical;
+    G4LogicalVolume* cad_cathode_logical;
+    G4LogicalVolume* cad_cathode_holder_logical;
+    G4LogicalVolume* cad_field_cage_cu_logical;
+    G4LogicalVolume* cad_internal_structure_logical;
+    G4LogicalVolume* cad_gem_logical;
+    G4LogicalVolume* cad_gem_stretcher_logical;
+    G4LogicalVolume* cad_light_guide_logical;
+    
 
     // Physical volumes
     G4VPhysicalVolume* WorldVolume_phys;
@@ -186,25 +181,20 @@ class CYGNODetectorConstruction : public G4VUserDetectorConstruction
     G4VPhysicalVolume* Shield2_phys;
     G4VPhysicalVolume* Shield3_phys;
     G4VPhysicalVolume* AirBox_phys;
-
-    G4VPhysicalVolume * cad_LIMEDetectorBody_physical;
-    G4VPhysicalVolume * cad_LIMEinternalStructure_physical;
-    //G4VPhysicalVolume * cad_cameras_all_physical;
-    //G4VPhysicalVolume * cad_window_physical;
-    G4VPhysicalVolume * TPC_phys;
-    G4VPhysicalVolume * CYGNO_phys;
-    G4VPhysicalVolume * cad_LIMEendPMT_physical;
-    //G4VPhysicalVolume * cad_turns_support_physical;
-    G4VPhysicalVolume * cad_GEMstretchers_physical;
-    G4VPhysicalVolume * cad_GEMsupportStructure_physical;
-    G4VPhysicalVolume * cad_GEMfoils_physical;
-    G4VPhysicalVolume * cad_SupportBenchLime_physical;
-    G4VPhysicalVolume * cad_Cathode_physical;
-    G4VPhysicalVolume * cad_FieldRings_physical;
+    G4VPhysicalVolume* TPC_phys;
+    G4VPhysicalVolume* CYGNO_phys;
     G4VPhysicalVolume* camera_phys; 
     G4VPhysicalVolume* camera_lens_phys; 
     G4VPhysicalVolume* camera_shield_phys;
-    G4VPhysicalVolume* window_phys;
+
+    G4VPhysicalVolume * cad_box_cu_physical;
+    G4VPhysicalVolume * cad_cathode_physical;
+    G4VPhysicalVolume * cad_cathode_holder_physical;
+    G4VPhysicalVolume * cad_field_cage_cu_physical;
+    G4VPhysicalVolume * cad_internal_structure_physical;
+    G4VPhysicalVolume * cad_gem_physical;
+    G4VPhysicalVolume * cad_gem_stretcher_physical;
+    G4VPhysicalVolume * cad_light_guide_physical;
    
     //CYGNO sensitive detector
     CYGNOSensitiveDetector * CYGNOSD;
